@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Llama Chat</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      #chat-container {
+        height: 500px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin-bottom: 20px;
+        background-color: white;
+        border-radius: 5px;
+      }
+      #input-container {
+        display: flex;
+        gap: 10px;
+      }
+      #message-input {
+        flex-grow: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .message {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      .user-message {
+        background-color: #e3f2fd;
+        margin-left: 20%;
+      }
+      .bot-message {
+        background-color: #f5f5f5;
+        margin-right: 20%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Llama Chat</h1>
+    <div id="chat-container"></div>
+    <div id="input-container">
+      <input
+        type="text"
+        id="message-input"
+        placeholder="Type your message..."
+      />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+      let ws = new WebSocket("ws://localhost:8000/chat");
+      let chatContainer = document.getElementById("chat-container");
+      let messageInput = document.getElementById("message-input");
+      let currentResponse = "";
+
+      ws.onopen = function () {
+        console.log("Connected to WebSocket");
+      };
+
+      ws.onmessage = function (event) {
+        if (event.data === "[DONE]") {
+          // Create a new bot message element
+          let messageElement = document.createElement("div");
+          messageElement.className = "message bot-message";
+          messageElement.textContent = currentResponse;
+          chatContainer.appendChild(messageElement);
+          currentResponse = "";
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        } else {
+          currentResponse += event.data;
+        }
+      };
+
+      ws.onclose = function () {
+        console.log("Disconnected from WebSocket");
+      };
+
+      function sendMessage() {
+        let message = messageInput.value.trim();
+        if (message) {
+          // Add user message to chat
+          let messageElement = document.createElement("div");
+          messageElement.className = "message user-message";
+          messageElement.textContent = message;
+          chatContainer.appendChild(messageElement);
+
+          // Send message to server
+          ws.send(message);
+          messageInput.value = "";
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+      }
+
+      // Allow sending message with Enter key
+      messageInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          sendMessage();
+        }
+      });
+    </script>
+  </body>
+</html>
