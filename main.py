@@ -53,6 +53,19 @@ async def websocket_endpoint(websocket: WebSocket):
 async def read_root():
     return {"message": "Welcome to the Ollama Chat API"}
 
+@app.get("/say_hello")
+async def read_item():
+    return {"message": "Hello World"}
+
+@app.post("/getRecommendations")
+async def get_recommendations(prompt: str):
+    try:
+        # Use generate method with streaming
+        recommendations = model.stream(prompt)
+        return {"recommendations": recommendations}
+    except Exception as e:
+        return {"error": str(e)}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
