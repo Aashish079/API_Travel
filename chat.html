@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>WebSocket Stream Chat</title>
+    <style>
+        #messages {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 400px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+        }
+        #chatbox {
+            width: calc(100% - 70px);
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #send-button {
+            padding: 10px;
+        }
+        .message {
+            margin-bottom: 10px;
+        }
+        .user-message {
+            color: #0066cc;
+            font-weight: bold;
+        }
+        .assistant-response {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div id="messages"></div>
+    <input type="text" id="chatbox" placeholder="Type your message..." />
+    <button id="send-button">Send</button>
+
+    <script>
+        const ws = new WebSocket("ws://0.0.0.0:8000/chat");
+        let currentResponseDiv = null;
+
+        ws.onopen = function() {
+            console.log("Connected to WebSocket server");
+        };
+
+        ws.onmessage = function(event) {
+            const messagesDiv = document.getElementById("messages");
+            
+            if (event.data === "[DONE]") {
+                currentResponseDiv = null;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                return;
+            }
+
+            if (!currentResponseDiv) {
+                // Create a new message container for the assistant's response
+                currentResponseDiv = document.createElement("div");
+                currentResponseDiv.className = "message assistant-response";
+                messagesDiv.appendChild(currentResponseDiv);
+            }
+
+            // Append the new chunk to the current response
+            currentResponseDiv.textContent += event.data;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        };
+
+        function sendMessage() {
+            const chatbox = document.getElementById("chatbox");
+            const message = chatbox.value;
+            if (message.trim() !== "") {
+                // Add user message to chat
+                const messagesDiv = document.getElementById("messages");
+                const userMessageDiv = document.createElement("div");
+                userMessageDiv.className = "message user-message";
+                userMessageDiv.textContent = message;
+                messagesDiv.appendChild(userMessageDiv);
+                
+                // Send message to server
+                ws.send(message);
+                chatbox.value = "";
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+        }
+
+        document.getElementById("send-button").addEventListener("click", sendMessage);
+
+        document.getElementById("chatbox").addEventListener("keypress", (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
