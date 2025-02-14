@@ -30,6 +30,8 @@
             color: #333;
         }
     </style>
+    <!-- Include Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <div id="messages"></div>
@@ -39,6 +41,7 @@
     <script>
         const ws = new WebSocket("ws://0.0.0.0:8000/chat");
         let currentResponseDiv = null;
+        let currentResponseText = "";
 
         ws.onopen = function() {
             console.log("Connected to WebSocket server");
@@ -48,7 +51,9 @@
             const messagesDiv = document.getElementById("messages");
             
             if (event.data === "[DONE]") {
+                // Reset for the next response
                 currentResponseDiv = null;
+                currentResponseText = "";
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
                 return;
             }
@@ -58,10 +63,12 @@
                 currentResponseDiv = document.createElement("div");
                 currentResponseDiv.className = "message assistant-response";
                 messagesDiv.appendChild(currentResponseDiv);
+                currentResponseText = "";
             }
 
-            // Append the new chunk to the current response
-            currentResponseDiv.textContent += event.data;
+            // Accumulate the new chunk text and update innerHTML using marked
+            currentResponseText += event.data;
+            currentResponseDiv.innerHTML = marked.parse(currentResponseText);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         };
 

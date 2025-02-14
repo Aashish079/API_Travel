@@ -5,12 +5,10 @@ from langchain_community.llms import Ollama
 from typing import List
 import json
 import asyncio
-from queue import Queue
-from threading import Thread
 
 app = FastAPI()
 
-# Initialize Ollama model without stream parameter
+# Load the model
 model = Ollama(model="llama3.1:latest")  
 
 class ConnectionManager:
