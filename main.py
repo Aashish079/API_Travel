@@ -5,25 +5,12 @@ from langchain_community.llms import Ollama
 from typing import List
 import json
 import asyncio
+from ConnectionManger import ConnectionManager
 
 app = FastAPI()
 
 # Load the model
 model = Ollama(model="llama3.1:latest")  
-
-class ConnectionManager:
-    def __init__(self):
-        self.active_connections: List[WebSocket] = []
-
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
-
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
-
-    async def send_message(self, message: str, websocket: WebSocket):
-        await websocket.send_text(message)
 
 manager = ConnectionManager()
 
@@ -51,17 +38,16 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.get("/")
 async def read_root():
-    return {"message": "Welcome to the Ollama Chat API"}
+    return {"message": "Welcome to Travel Companion API"}
 
-@app.get("/say_hello")
-async def read_item():
-    return {"message": "Hello World"}
+
 
 @app.post("/getRecommendations")
-async def get_recommendations(prompt: str):
+async def get_recommendations(currentPlace: str):
     try:
         # Use generate method with streaming
-        recommendations = model.stream(prompt)
+        recommendations = model.stream(currentPlace)
+        # To do: Implement a better recommendation system
         return {"recommendations": recommendations}
     except Exception as e:
         return {"error": str(e)}
