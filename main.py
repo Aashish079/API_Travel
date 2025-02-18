@@ -1,15 +1,17 @@
 # main.py
 import os
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from typing import Optional
 from langchain_community.llms import Ollama
 from typing import List
 import json
 import asyncio
+from recommendation import recommend_monuments
 
 app = FastAPI()
 
 # Load the model
-model = Ollama(model="llama3.1:latest")  
+model = Ollama(model="anoob/simp2:latest")  
 
 class ConnectionManager:
     def __init__(self):
@@ -58,13 +60,8 @@ async def read_item():
     return {"message": "Hello World"}
 
 @app.post("/getRecommendations")
-async def get_recommendations(prompt: str):
-    try:
-        # Use generate method with streaming
-        recommendations = model.stream(prompt)
-        return {"recommendations": recommendations}
-    except Exception as e:
-        return {"error": str(e)}
+async def get_recommendations(prompt: Optional[str] = None):
+    return recommend_monuments()
 
 if __name__ == "__main__":
     import uvicorn
