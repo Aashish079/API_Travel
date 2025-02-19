@@ -6,6 +6,7 @@ import json
 import asyncio
 from ConnectionManager import ConnectionManager
 from RAGAgent import RAGAgent
+from recommendation import recommend_monuments
 
 app = FastAPI()
 
@@ -18,6 +19,7 @@ try:
     manager = ConnectionManager()
     # Store WebSocket connections and their chat histories
     websocket_histories: Dict[WebSocket, List[str]] = {}
+      
 except Exception as e:
     print(f"Error initializing components: {str(e)}")
     raise
@@ -67,6 +69,7 @@ async def websocket_endpoint(websocket: WebSocket):
             manager.disconnect(websocket)
             rag_agent.clear_history()
 
+
 @app.post("/clear-history")
 async def clear_chat_history():
     """Endpoint to clear chat history"""
@@ -75,6 +78,18 @@ async def clear_chat_history():
         return {"message": "Chat history cleared successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+        
+@app.get("/")
+async def read_root():
+    return {"message": "Welcome to the Ollama Chat API"}
+
+@app.get("/say_hello")
+async def read_item():
+    return {"message": "Hello World"}
+
+@app.post("/getRecommendations")
+async def get_recommendations(prompt: Optional[str] = None):
+    return recommend_monuments()
 
 if __name__ == "__main__":
     import uvicorn
