@@ -52,11 +52,11 @@ Context: {context}
 Question: {question}
 
 Format your response in the following structure:
-1. **Name and Location:** (if not available, skip)
-2. **Historical Background:** (if not available, skip)
-3. **Architectural Features:** (if not available, skip)
-4. **Cultural and Religious Significance:** (if not available, skip)
-5. **Current Status and Additional Information:** (if not available, skip)
+1. **Name and Location:** 
+2. **Historical Background:** 
+3. **Architectural Features:** 
+4. **Cultural and Religious Significance:** 
+5. **Current Status and Additional Information:**
 
 Remember: Only include sections where you have explicit information from the context. Skip sections where you don't have information rather than making assumptions. Try to keep the response under 200 words."""
 
@@ -126,7 +126,7 @@ Remember: Only include sections where you have explicit information from the con
         
         return db
 
-    def get_relevant_context(self, query: str, num_docs: int = 2, min_score: float = 0.8) -> str:
+    def get_relevant_context(self, query: str, num_docs: int = 3, min_score: float = 0.8) -> str:
         """Retrieve most relevant context for a query, with stricter filtering."""
         # Get documents with similarity scores
         docs_and_scores = self.db.similarity_search_with_score(query, k=num_docs)
@@ -171,8 +171,11 @@ Remember: Only include sections where you have explicit information from the con
     
         enhanced_prompt = self.prompt.format(
             context=context,
-            question=query
+            question=query,
+            chat_history=chat_history
         )
+        print(enhanced_prompt)
+
         return enhanced_prompt
 
     def add_to_history(self, query: str, response: str):
