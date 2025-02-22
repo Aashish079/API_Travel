@@ -7,13 +7,14 @@ import asyncio
 from ConnectionManager import ConnectionManager
 from RAGAgent import RAGAgent
 from recommendation import recommend_monuments
+from typing import Optional
 
 app = FastAPI()
 
 # Initialize components
 try:
     model = Ollama(
-    model="llama3.1:latest"
+    model="Aashish54/travelComp:latest",
 )
     rag_agent = RAGAgent()
     manager = ConnectionManager()
