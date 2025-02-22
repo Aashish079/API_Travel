@@ -7,12 +7,11 @@ from datetime import datetime
 monuments_data = [
     {"id": 1, "name": "Pashupatinath Temple", "latitude": 27.7104, "longitude": 85.3487, "type": "Hindu Temple", "popularity": 0.95, "indoor": False, "best_season": "all", "best_time": "morning", "events": ["Maha Shivaratri", "Tihar Festival"]},
     {"id": 2, "name": "Boudhanath Stupa", "latitude": 27.7139, "longitude": 85.3600, "type": "Buddhist Stupa", "popularity": 0.92, "indoor": False, "best_season": "spring", "best_time": "morning", "events": ["Buddha Jayanti"]},
-    {"id": 3, "name": "Swayambhunath Stupa (Monkey Temple)", "latitude": 27.7149, "longitude": 85.2904, "type": "Buddhist Stupa", "popularity": 0.88, "indoor": False, "best_season": "all", "best_time": "morning", "events": ["Tihar Festival", "Buddha Jayanti"]},
+    {"id": 3, "name": "Swayambhunath Stupa", "latitude": 27.7149, "longitude": 85.2904, "type": "Buddhist Stupa", "popularity": 0.88, "indoor": False, "best_season": "all", "best_time": "morning", "events": ["Tihar Festival", "Buddha Jayanti"]},
     {"id": 4, "name": "Durbar Square", "latitude": 27.7101, "longitude": 85.3000, "type": "Historical Monument", "popularity": 0.85, "indoor": False, "best_season": "autumn", "best_time": "afternoon", "events": ["New Year Celebration"]},
     {"id": 5, "name": "Patan Durbar Square", "latitude": 27.6710, "longitude": 85.3245, "type": "Historical Monument", "popularity": 0.9, "indoor": False, "best_season": "autumn", "best_time": "afternoon", "events": ["Holi Festival", "Bisket Jatra"]},
     {"id": 6, "name": "Bhaktapur Durbar Square", "latitude": 27.6749, "longitude": 85.4290, "type": "Historical Monument", "popularity": 0.87, "indoor": False, "best_season": "spring", "best_time": "morning", "events": ["Bisket Jatra"]},
     {"id": 7, "name": "Garden of Dreams", "latitude": 27.7170, "longitude": 85.2920, "type": "Garden", "popularity": 0.75, "indoor": False, "best_season": "all", "best_time": "afternoon", "events": ["Christmas Celebration"]},
-    {"id": 8, "name": "Swayambhunath Monkey Temple", "latitude": 27.7149, "longitude": 85.2904, "type": "Buddhist Stupa", "popularity": 0.82, "indoor": False, "best_season": "all", "best_time": "morning", "events": ["Tihar Festival"]},
     {"id": 9, "name": "Kumari Ghar", "latitude": 27.7111, "longitude": 85.2964, "type": "Palace", "popularity": 0.79, "indoor": True, "best_season": "winter", "best_time": "morning", "events": ["Dashain Festival", "Tihar Festival"]},
     {"id": 10, "name": "Rani Pokhari", "latitude": 27.7100, "longitude": 85.2930, "type": "Historical Site", "popularity": 0.7, "indoor": False, "best_season": "summer", "best_time": "afternoon", "events": ["Nepal Sambat New Year"]},
     {"id": 11, "name": "Changu Narayan Temple", "latitude": 27.6749, "longitude": 85.4316, "type": "Hindu Temple", "popularity": 0.72, "indoor": False, "best_season": "all", "best_time": "morning", "events": ["Maha Shivaratri", "Tihar Festival"]},
@@ -26,6 +25,7 @@ monuments_data = [
     {"id": 19, "name": "Bikram Sambat Park", "latitude": 27.7012, "longitude": 85.2873, "type": "Park", "popularity": 0.71, "indoor": False, "best_season": "spring", "best_time": "morning", "events": ["Bikram Sambat New Year"]},
     {"id": 20, "name": "Chobhar Caves", "latitude": 27.6267, "longitude": 85.3250, "type": "Cave", "popularity": 0.65, "indoor": True, "best_season": "autumn", "best_time": "afternoon", "events": ["Autumn Festival"]}
 ]
+
 
 events_data = [
     {"name": "Dashain Festival", "start_date": "2025-10-10", "end_date": "2025-10-24", "related_type": "Hindu Temples"},
