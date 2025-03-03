@@ -54,9 +54,8 @@ class Monument(Base):
     name = Column(String(255), nullable=False)
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
-    popularity = Column(Integer)
+    popularity = Column(Float, nullable=False)
     indoor = Column(Boolean, default=False)
-    events = Column(String(255))  # Could be stored as JSON or comma-separated values
     
     # Relationships
     tags = relationship("Tag", secondary=monument_tag, back_populates="monuments")
