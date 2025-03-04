@@ -74,7 +74,7 @@ Remember: Only include sections where you have explicit information from the con
                 self.embeddings_saved = True
             else:
                 self._embeddings = HuggingFaceEmbeddings(
-                    model_name="sentence-transformers/all-MiniLM-L6-v2"
+                    model_name="BAAI/bge-large-en-v1.5"
                 )
                 with open(self.embedding_file, "wb") as f:
                     dump(self._embeddings, f)
@@ -107,6 +107,36 @@ Remember: Only include sections where you have explicit information from the con
                 chunk_overlap=50
             )
             chunks = text_splitter.split_documents(data)
+
+
+            def monument_aware_chunking(data):
+                """Custom chunking that preserves monument information structure"""
+                chunks = []
+                for doc in data:
+                    # Extract CSV fields
+                    metadata = doc.metadata # Metadata is a dictionary 
+                    name = doc.metadata.get('name', '')
+                    
+                    # Create separate chunks for major sections while preserving metadata
+                    sections = [
+                        "Historical Background", 
+                        "Architectural Features",
+                        "Religious Significance", 
+                        "Current Status"
+                    ]
+                    
+                    content = doc.page_content
+                    for i, section in enumerate(sections):
+                        if i < len(sections) - 1:
+                            start = content.find(section)
+                            end = content.find(sections[i+1])
+                            if start != -1 and end != -1:
+                                section_text = content[start:end]
+                                chunk_metadata = doc.metadata.copy()
+                                chunk_metadata['section'] = section
+                                chunks.append(Document(page_content=section_text, metadata=chunk_metadata))
+                
+                return chunks
             
             # Save chunks
             with open(self.chunks_file, "wb") as f:
@@ -135,7 +165,7 @@ Remember: Only include sections where you have explicit information from the con
         filtered_docs = []
         for doc, score in docs_and_scores:
             if score >= min_score:
-                # Extract only the most relevant sentences
+                # Extandract only the most relevant sentences
                 sentences = doc.page_content.split('.')
                 relevant_sentences = [s.strip() + '.' for s in sentences[:3]]  # Take only first 3 sentences
                 filtered_docs.append(' '.join(relevant_sentences))

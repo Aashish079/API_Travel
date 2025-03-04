@@ -1,6 +1,6 @@
 FROM llama3.1:8b
 
-# Add your LoRA adapter to the base model
+# Adding LoRA adapter to the base model
 ADAPTER lora_model
 
 # Template based on the Llama 3.1 formatting
