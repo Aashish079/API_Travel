@@ -13,6 +13,23 @@ monument_tag = Table(
     Column('monument_id', Integer, ForeignKey('monument.monument_id'), primary_key=True)
 )
 
+user_preference = Table(
+    'user_preference',
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('user.user_id'), primary_key=True),
+    Column('tag_id', Integer, ForeignKey('tag.tag_id'), primary_key=True)
+)
+
+class Tag(Base):
+    __tablename__ = 'tag'
+    
+    tag_id = Column(Integer, primary_key=True, autoincrement=True)
+    tag_name = Column(String(255), nullable=False, unique=True)
+    
+    # Relationships
+    monuments = relationship("Monument", secondary=monument_tag, back_populates="tags")
+    users = relationship("User", secondary=user_preference, back_populates="preferences")
+
 class User(Base):
     __tablename__ = 'user'
     
@@ -24,28 +41,9 @@ class User(Base):
     location = Column(String(255))
     
     # Relationships
-    preferences = relationship("UserPreference", back_populates="user")
+    preferences = relationship("Tag", secondary=user_preference, back_populates="users")
     bookmarks = relationship("Bookmarks", back_populates="user")
     visited_monuments = relationship("UserVisitedMonument", back_populates="user")
-
-class UserPreference(Base):
-    __tablename__ = 'user_preference'
-    
-    user_id = Column(Integer, ForeignKey('user.user_id'), primary_key=True)
-    tag_id = Column(Integer, ForeignKey('tag.tag_id'))
-    
-    # Relationships
-    user = relationship("User", back_populates="preferences")
-    tag = relationship("Tag")
-
-class Tag(Base):
-    __tablename__ = 'tag'
-    
-    tag_id = Column(Integer, primary_key=True, autoincrement=True)
-    tag_name = Column(String(255), nullable=False, unique=True)
-    
-    # Relationships
-    monuments = relationship("Monument", secondary=monument_tag, back_populates="tags")
 
 class Monument(Base):
     __tablename__ = 'monument'
@@ -56,6 +54,7 @@ class Monument(Base):
     longitude = Column(Float, nullable=False)
     popularity = Column(Float, nullable=False)
     indoor = Column(Boolean, default=False)
+    location = Column(String(255))
     type = Column(String(255))
     description = Column(Text)
     image_url = Column(String(255))
@@ -123,7 +122,7 @@ class Bookmarks(Base):
 class UserVisitedMonument(Base):
     __tablename__ = 'user_visited_monument'
     
-    user_id = Column(Integer, ForeignKey('user.user_id'), primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.user_id'), primary_key=True) 
     monument_id = Column(Integer, ForeignKey('monument.monument_id'), primary_key=True)
     visited_at = Column(DateTime, default=datetime.utcnow)
     

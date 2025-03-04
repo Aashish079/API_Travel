@@ -4,7 +4,7 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from database import engine, get_db
 from models import Monument as DBMonument
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Request
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Request, Body
 from pathlib import Path
 from fastapi.staticfiles import StaticFiles
 from typing import Optional, List
@@ -25,6 +25,7 @@ class Monument(BaseModel):
     type: str
     description: str
     image_url: str
+    location: str
 
     class Config:
         orm_mode = True
@@ -40,7 +41,12 @@ assets_dir.mkdir(exist_ok=True)
 app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
 # Load the model
-model = Ollama(model="anoob/simp2:latest")  
+model = Ollama(model="Aashish54/travelComp")  
+
+class RecommendationRequest(BaseModel):
+    latitude: Optional[float] = 27.7104
+    longitude: Optional[float] = 85.3487
+    preferred_type: Optional[str] = "Hindu Temple" #Need to update here by fetching actual user preference from db
 
 class ConnectionManager:
     def __init__(self):
@@ -124,16 +130,44 @@ async def get_monuments(db: Session = Depends(get_db)):
             indoor=db_monument.indoor,
             type=db_monument.type,
             description=db_monument.description,
-            image_url=db_monument.image_url
+            image_url=db_monument.image_url,
+            location = db_monument.location
         )
         monuments.append(monument)
     
     return monuments
 
-@app.post("/getRecommendations")
-async def get_recommendations(prompt: Optional[str] = None):
-    return recommend_monuments()
+# @app.post("/recognizeMonument")
+# async def get_Monument(request: Optionl[Image] ):
+#     """
+#     Returns Recognized Monuments based on photo and location from the frontend
 
+
+#      """
+
+
+
+@app.post("/getRecommendations")
+async def get_recommendations(request: Optional[RecommendationRequest] = Body(None)):
+    """
+    Get recommended monuments based on user preferences.
+    
+    Parameters:
+    - latitude: User's current latitude (optional, default: 27.7104)
+    - longitude: User's current longitude (optional, default: 85.3487)
+    - preferred_type: Type of monument the user prefers (optional, default: "Hindu Temple")
+    
+    Returns:
+    - A sorted list of monument objects based on recommendation score
+    """
+    if request is None:
+        request = RecommendationRequest()
+        
+    return recommend_monuments(
+        user_lat=request.latitude,
+        user_long=request.longitude,
+        preferred_type=request.preferred_type
+    )
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

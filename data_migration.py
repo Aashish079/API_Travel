@@ -1,6 +1,6 @@
 from database import SessionLocal
 from models import Monument, Tag, Event, MonumentEvent, DaySlot, MonumentSlot
-from recommendation import monuments_data, events_data
+from data import monuments_data, events_data
 from datetime import datetime
 
 def migrate_data():
@@ -28,7 +28,8 @@ def migrate_data():
             indoor=monument_data["indoor"],
             type = monument_data["type"],
             description = monument_data["description"],
-            image_url = monument_data["image_url"]
+            image_url = monument_data["image_url"],
+            location = monument_data["location"]
         )
         
         # Link tags
