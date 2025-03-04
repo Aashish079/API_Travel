@@ -26,6 +26,9 @@ def migrate_data():
             longitude=monument_data["longitude"],
             popularity=monument_data["popularity"],
             indoor=monument_data["indoor"],
+            type = monument_data["type"],
+            description = monument_data["description"],
+            image_url = monument_data["image_url"]
         )
         
         # Link tags

@@ -56,6 +56,9 @@ class Monument(Base):
     longitude = Column(Float, nullable=False)
     popularity = Column(Float, nullable=False)
     indoor = Column(Boolean, default=False)
+    type = Column(String(255))
+    description = Column(Text)
+    image_url = Column(String(255))
     
     # Relationships
     tags = relationship("Tag", secondary=monument_tag, back_populates="monuments")
